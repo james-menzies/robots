@@ -2,11 +2,18 @@
 
 This challenge attempts to solve the IOOF's recruitment challenge involving a robot simulation. The complete details of the challenge is [laid out in full here.](https://github.com/ioof-holdings/recruitment/wiki/Robot-Challenge) This program solves the extension to the problem, which allows multiple robots to roam around on the table. The following discussion will provide a high-level overview of the architecture, followed by a more detailed breakdown of classes and interfaces, followed by the testing methodology. 
 
+This program is written in Java 11, however is completely backward-compatible with Java 8.
+
+## How to Run
+(Coming Soon)
+
 ## Program Architecture
 
 The key feature of this demonstration is the intent to separate the concerns between the **View** (the user interface), the **Controller** (what happens when a user issues a command) and the **Model** (the underlying data structures). This is roughly equivalent to the standard MVC architecture, but with one key exception:
 
-> Rather than the **View** be directly updated from the **Model**, the View will arbitrarily request an update from the **Controller** via the `REPORT` command. This is purely to stay within the parameters of the challenge. If desired, a traditional MVC solution could be deployed, likely via attaching a callback listener on the **Model.**
+> Rather than the **View** be directly updated from the **Model**, the View will arbitrarily request an update from the **Controller** via the `REPORT` command. This is purely to stay within the parameters of the challenge. 
+>
+>If desired however, it's entirely possible that a traditional MVC solution could be deployed, likely via attaching a callback listener on the **Model.**
 
 To round out the application, a `Main` class is implemented to bootstrap the program.
 
@@ -16,7 +23,13 @@ There are 2 primary components in this program, the **ROBOT** and the **TABLE.**
 
 ### Robot
 
-The `Robot` class represents instances of the 
+The `Robot` class represents instances of the physical robots that roam on the table. 
+#### Instance Variables
+* `orientation` - The direction the `Robot` is facing, must be provided on initialization.
+#### Methods
+* `Orientation getOrientation()` 
+* `void turn(Direction d)` - This will analyze the direction provided and update the `orientation` variable.
+* `Coordinate getIntent(Coordinate c)` - This will calculate where this object would move based on the given `Coordinate`
 
 ### Table
 
@@ -39,13 +52,6 @@ The `TableEntity` interface should expose the following:
 - `getIntent`: Get coordinates of where entity would move
 - `move`: Direct entity to move.
 
-### Support Objects
-
-These objects are used primarily to encapsulate argument information:
-
-- Direction (LEFT, RIGHT): `enum` used to turn the robot.
-- Orientation (NORTH, SOUTH, EAST, WEST): `enum` used to specify facing direction
-- Coordinates (X, Y): Compound object to couple table entity position.
 
 ## The Controller Implementation
 
