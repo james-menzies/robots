@@ -30,7 +30,7 @@ There are 2 primary components in this program, the **ROBOT** and the **TABLE.**
 
 The `Robot` class represents instances of the physical robots that roam on the table. 
 #### Instance Variables
-* `orientation` - The direction the `Robot` is facing, must be provided on initialization.
+* `Orientation orientation` - The direction the `Robot` is facing, must be provided on initialization.
 #### Methods
 * `Orientation getOrientation()` 
 * `void turn(Direction d)` - This will analyze the direction provided and update the `orientation` variable.
@@ -38,24 +38,36 @@ The `Robot` class represents instances of the physical robots that roam on the t
 
 ### Table
 
-The table cares about its dimensions, and what positions are occupied. Therefore it needs to maintain a reference of every `Robot` that exists on it. This is fine, however it would be nice to prevent tight coupling between `Robot` and `Table`, so we could allow different objects to roam on our table. Perhaps we may have a `Frog` ****object in the future that moves 2 spaces at a time! 
+The table represents the surface the `Robot` instances traverse, and are ultimately responsible for validating their movement. To avoid tight coupling between the `Robot` and `Table`, the `Robot` will be referred to via an interface reference, `TableEntity` (described below). This has multiple benefits, including:
+* Better isolation for unit testing.
+* The ability to create different types of objects that roam on the table which exhibit different behaviour. For example, the simulation might implement a `Frog` object that jumps 3 spaces at a time!
+#### Instance Variables
+* `Coordinate tableLimit` - The maximum permissible `Coordinate` on the table. In the challenge this is hard-coded to a 5x5 grid, therefore this value will always be (4,4) given a zero-based index. However, defining it as a variable allows flexibility for future iterations.
+* `Map<Integer, PositionedEntity> registeredEntities` - This stores a reference to all the entities on the table and is used extensively in the methods described below. Also see `PositionedEntity` for a detailed explanation.
+#### Methods
+* `boolean move(int reference)` - Given an integer reference, this method will analyze the `PositionedEntity` for the given reference, and establish whether the move is permissible based on the position of the other objects on, and the range of, the table. If an invalid reference is given, an Exception will occur.
+* `int registerEntity(TableEntity t, Coordinate c)` - This will attempt to place the entity in the `registeredEntities` variable. An exception will be thrown if the `Coordinate` value is out of range of the `Table`. It will return an integer reference to be used for subsequent method calls.
+* `Map<Integer, Coordinate> getPositions()` - This will return a map of all entity references to their position on the table.
 
-To solve this, the `Robot` ****object will implement an interface `TableEntity` that only exposes the parts of `Robot` that `Table` is interested in (see below).
-
-To be initialized, the table needs initial demonstrations. Whilst the demo states the dimensions are always 5x5, it would mean less refactoring going forward if the table was able to accept different dimensions upon initialization.
-
-The behavior that TABLE exposes is as follows:
-
-- A register method, which takes a `TableEntity` so that it can track its movements. If the `TableEntity` has an invalid position, an exception will be thrown. It returns a numerical identifier for reference
-- A move method, which takes an identifier and moves the entity (robot) if it is legal to do so.
 
 ### TableEntity
 
-The `TableEntity` interface should expose the following:
+The `TableEntity` is a functional interface, and any object that would exist on the `Table` needs to implement it. It contains the `getIntent()` method as described by the `Robot` class.
 
-- `getPosition`: Get coordinates of entity
-- `getIntent`: Get coordinates of where entity would move
-- `move`: Direct entity to move.
+#### Methods
+* `Coordinate getIntent(Coordinate c)`
+
+### PositionedEntity
+
+This is an inner class contained in the `Table` class, and is simply a way to fuse together a `Coordinate` variable with a `TableEntity` variable.
+
+#### Variables
+* `final TableEntity entity`
+* `Coordinate coordinate`
+#### Methods
+* `getEntity()`
+* `getCoordinate()`
+* `setCoordinate(Coordinate c)`
 
 
 ## The Controller Implementation
