@@ -19,7 +19,12 @@ To round out the application, a `Main` class is implemented to bootstrap the pro
 
 ## The Model
 
-There are 2 primary components in this program, the **ROBOT** and the **TABLE.**
+There are 2 primary components in this program, the **ROBOT** and the **TABLE.** However, for context it is important to first discuss some support objects
+
+### Support Objects
+* `Coordinate` - An object to represent a location on the `Table`. It is an immutable, read-only object that has two instance variables `x` and `y`, as well as getters for those variables. Both variables must be equal to or greater than 0.
+* `Orientation` - An `enum` that represents the 4 cardinal directions, `NORTH`, `SOUTH`, `EAST` and `WEST`. Used to describe the direction the `Robot` is facing.
+* `Direction` - An `enum` that represents the direction the `Robot` can rotate, `LEFT` and `RIGHT`. 
 
 ### Robot
 
