@@ -46,7 +46,7 @@ The table represents the surface the `Robot` instances traverse, and are ultimat
 * `Map<Integer, PositionedEntity> registeredEntities` - This stores a reference to all the entities on the table and is used extensively in the methods described below. Also see `PositionedEntity` for a detailed explanation.
 #### Methods
 * `boolean move(int reference)` - Given an integer reference, this method will analyze the `PositionedEntity` for the given reference, and establish whether the move is permissible based on the position of the other objects on, and the range of, the table. If an invalid reference is given, an Exception will occur.
-* `int registerEntity(TableEntity t, Coordinate c)` - This will attempt to place the entity in the `registeredEntities` variable. An exception will be thrown if the `Coordinate` value is out of range of the `Table`. It will return an integer reference to be used for subsequent method calls.
+* `int registerEntity(TableEntity t, Coordinate c)` - This will attempt to place the entity in the `registeredEntities` variable. An exception will be thrown if the `Coordinate` value is out of range of the `Table` or the position is occupied. It will return an integer reference to be used for subsequent method calls.
 * `Map<Integer, Coordinate> getPositions()` - This will return a map of all entity references to their position on the table.
 
 
@@ -69,48 +69,103 @@ This is an inner class contained in the `Table` class, and is simply a way to fu
 * `getCoordinate()`
 * `setCoordinate(Coordinate c)`
 
+## The Controller
 
-## The Controller Implementation
+Since the program is very small, the entire controller will be contained in a single class; `Controller`. However, care has been taken so that if the program were to increase in complexity, the functionality of the controller could be conveniently refactored into multiple classes if desired. 
 
-The controller needs to maintain a reference to the Table, a map of the IDs of the robots to their object references, and the reference of the currently selected robot. There is already one critical concern here:
+### Functionality 
+The controller is essentially the backbone of the application and needs to perform the following functions:
+* Maintain a reference to the robots on the table, the table itself, and the active robot, in other words, maintain the 'application state'
+* Map the commands from the user interface to handler methods, which can manipulate the application state.
+* Accept a callback function that allows the application state to be printed to the screen.
 
-> The controller needs to have direct references to `Robot` instances, however that will expose the `move()` method, which should remain encapsulated from everything other than the `Table` class.
+### Singleton Pattern
 
-Therefore, the controller should interact with the `Robot` class via an interface, similar to how the `Table` does. 
+This is enforced on the Controller class to ensure that there can't be multiple versions of application state in the program. Additionally, since it is accessed statically, references for the controller don't need to be passed around to every interested party. 
 
-### The "Turnable" Interface
+The controller is **_strongly encapsulated_** to ensure the application can't be put into an invalid state arbitrarily. 
 
-The behavior that the controller requires is:
-
-- `turn()`: So that it can handle the `LEFT` and `RIGHT` commands.
-- `getPosition()`: So it can help render `REPORT` information to the scree
-- `getOrientation()`: As above
-
-Therefore, the `Robot` class will implement both the `Turnable` and `TableEntity` interfaces.
-
-### Instance Variables
-
-- `active`: The ID of the selected `Robot`. Integer type.
-- `robots`: A reference to all the robots on the `Table`. It is a hash map of Integer IDs to `Turnable` objects.
-- `table`: A reference to the table object.
-- `displayCallback`: The function that gets called when a report is requested
+`Controller` has been implemented this way to allow for many different controller and view classes to be created in the future without a labyrinth of references being passed around.
 
 ### Initialization
+The only thing required to initialize the application state is a `Table` object, which is provided by the `Main` class.
 
-The controller requires a `Table` object to be initialized and nothing else.
 
-### Behavior
+### Methods and Variables
 
-The controller should map all of the user commands on a 1:1 ratio. It should also accept a callback function so that the `REPORT` function can correctly update the display. Functions are as follows:
+#### Variables
 
-- `setDisplayCallback()`: Sets the function to call when a report is requested.
-- `onLeft()`: Look at active robot, then calls the `turn()` method on the active robot. Ignores if active robot isn't set.
-- `onRight()`: Same as above, with a different argument
-- `onRobot()`: Change the active robot variable, ignore if ID isn't present in hash map.
-- `onMove()`: Call the table's `turn()` method, providing the ID of the active robot.
-- `onPlace()`: Call the table's `register()` method, and appends the returned ID to the `robots` map. Does nothing if `table` returns an error.
-- `onReport()`: Calls the `displayCallback()` function. If unset, an exception is thrown.
+* `private int activeRobot` - The integer reference of the selected robot.
+* `private Map<Integer, Robot> robots` - A mapping of all the robots on the table.
+* `private Table table` - The `Table` instance being used in the 
+application.
+* `private Consumer<List<RobotDescription>> onReportCallback` - Callback that gets called when `onReport()` is called.
+* `private Controller self` - A reference to the single running instance of the `Controller` class.
 
-## Display Implementation
+#### Methods
+
+* `static void initialize(Table t)` - Required to initialized the application state. Failing to to call this function before calling `onPlace` will result in an exception being thrown.
+* `static Controller getInstance()` - Get the single running instance of the `Controller` class.
+* `void onPlace(Coordinate c, Orientation o)` - This will place a `Robot` on the table. This method will perform no function if the `Coordinate` argument is beyond the range of the table. This method must also be called before any of the other handlers, which will perform no function until that point.
+* `void onMove()` - Inspects the `activeRobot` variable and calls the `move()` method on the `Table`.
+* `void onLeft()` - Inspects the `activeRobot` variable and calls the `turn()` function on the selected robot passing in `Direction.LEFT`.
+* `void onRight()` - Same as `onLeft()` except with `Direction.RIGHT`.
+* `void onReport()` - Generates a list of `RobotDescription` objects (see below), then calls the callback provided by `static setOnReportCallback`. If unset, no function is performed.
+* `void onRobot(int reference)` - Change `activeRobot` to given reference. Perform no function if reference is invalid.
+* `void setOnReportCallback(Consumer<List<RobotDescription>>)` - This registers a callback that gets called when the `onReport` handle is called. If unset `onReport()` will perform no function.
+
+### RobotDescription Class
+This class is introduced to address the need to combine together information about the position (stored in the `Table`) and orientation (stored in the `Robot`) so that it can be output as per the requirements in the challenge description. It in an inner class of `Controller` and has 3 read-only variables:
+* `String name`
+* `Coordinate coordinate`
+* `Orientation orientation`
+
+## The View
+The **View** is very similar to the **Controller** in that it is contained in a single class and is accessed statically. It will statically call the `setOnReportCallback` method in the loading of the class, so no initialization method is required in this intance.
+
+
+### Methods
+* `static void dispatch(String command)` - Takes a string, and calls the appropriate handler based on the command. Performs no action if the command or its parameters are invalid.
+* `static void run()` - This will run an infinite loop that accepts standard input and dispatches it.
 
 ## Testing
+
+Testing will involve the use of unit as well as integration testing. For each class, the desired behaviour has been outlined. No tests will be specifically created for `Direction`, `Orientation`, `RobotDescription` and `PositionedEntity` as they are basic to contain anything meaningful to test.
+
+### Orientation
+* Ensure negative indices cannot be created on either variable.
+* Ensure that equality works as expected, e.g. (1,2) == (1,2).
+
+### Robot
+* Ensure that the robot turns correctly, e.g. a robot turning left when facing `NORTH` should then be facing `WEST`.
+* Ensure that the robot's intent functions correctly, e.g. a robot facing `NORTH` when given a `Coordinate` of (1,1) should return (1,2).
+* Ensure graceful handling of invalid coordinates, e.g. A robot facing `SOUTH` when given a `Coordinate` of (0,0) should return (0,0) to avoid throwing an exception.
+
+### Table
+
+Since the `Table` refers to the `Robots` via an interface, we can supply a mock of this inteface when testing.
+
+Desired behaviour:
+* Out of range register throws exception.
+* Occupied position register throws exception.
+* `getPositions` correctly returns positions of robots on initial placement. `getPositions` will be passively tested on following tests as well.
+* Legal moves of entity causes its position to change.
+* Out of range movement causes no move to occur.
+* Movement that would cause a collision causes no movement to occur.
+
+### Display
+
+The Display has separated the dispatch logic from the reading of standard input. This means commands can be programmatically passed to the display so they can be tested. The other half of this process involves mocking out the `Controller` class, again via an interface. 
+
+This interface contains all of the `Controller` class methods minus the `initialize()` and `getInstance()` methods. It adds the functionality of exposing the last called handler to ensure that the correct handler is being called by the display.
+
+To ensure that information is displayed correctly to the user, manual tests will be performed.
+
+Desired behaviour:
+* All zero-argument commands (`REPORT`, `LEFT`, `RIGHT` and `MOVE`) get correctly called.
+* All non-zero-argument command (`ROBOT` and `PLACE`) do **not** get called when no arguments are provided.
+* Verify invalid and valid argument cases for both `ROBOT` and `PLACE`.
+
+### Controller
+
+The logic of the `Controller` will be tested through integration tests, rather than by mocking out classes. It will use the example cases mentioned in the challenge description, as well as a few additonaly ones.
