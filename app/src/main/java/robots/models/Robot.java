@@ -1,6 +1,6 @@
 package robots.models;
 
-public class Robot {
+public class Robot implements TableEntity{
 
     // caching used for performance reasons.
     static private Orientation[] orientations = Orientation.values();
