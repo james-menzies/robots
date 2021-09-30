@@ -56,13 +56,13 @@ public class RobotTest {
         Robot r = new Robot(Orientation.SOUTH);
 
         r.turn(Direction.RIGHT);
-        assertEquals(Orientation.EAST, r.getOrientation());
+        assertEquals(Orientation.WEST, r.getOrientation());
 
         r.turn(Direction.RIGHT);
         assertEquals(Orientation.NORTH, r.getOrientation());
 
         r.turn(Direction.RIGHT);
-        assertEquals(Orientation.WEST, r.getOrientation());
+        assertEquals(Orientation.EAST, r.getOrientation());
 
         r.turn(Direction.RIGHT);
         assertEquals(Orientation.SOUTH, r.getOrientation());
