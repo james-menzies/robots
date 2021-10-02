@@ -98,7 +98,7 @@ public class Controller implements IController {
         this.onReportCallback = callback;
     }
 
-    public RobotDescription[] getState() {
+    public List<RobotDescription> getState() {
         Map<Integer, Coordinate> positions = table.getPositions();
         ArrayList<RobotDescription> returnValue = new ArrayList<>();
         for (int key : robots.keySet()) {
@@ -111,6 +111,6 @@ public class Controller implements IController {
             );
         }
 
-        return returnValue.toArray(new RobotDescription[robots.size()]);
+        return returnValue;
     }
 }

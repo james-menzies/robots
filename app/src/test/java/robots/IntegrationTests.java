@@ -8,7 +8,8 @@ import robots.models.Orientation;
 import robots.models.Table;
 import robots.views.Display;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
@@ -22,10 +23,8 @@ public class IntegrationTests {
                 "MOVE",
                 "REPORT"
         };
-
-        RobotDescription[] results = new RobotDescription[]{
-                new RobotDescription("1", new Coordinate(0, 1), Orientation.NORTH)
-        };
+        List<RobotDescription> results = new ArrayList<>();
+        results.add(new RobotDescription("1", new Coordinate(0, 1), Orientation.NORTH));
 
         runSample(commands, results);
     }
@@ -38,9 +37,8 @@ public class IntegrationTests {
                 "REPORT"
         };
 
-        RobotDescription[] results = new RobotDescription[] {
-                new RobotDescription("1", new Coordinate(0,0), Orientation.WEST)
-        };
+        List<RobotDescription> results = new ArrayList<>();
+        results.add(new RobotDescription("1", new Coordinate(0,0), Orientation.WEST));
 
         runSample(commands, results);
     }
@@ -56,9 +54,8 @@ public class IntegrationTests {
                 "REPORT"
         };
 
-        RobotDescription[] results = new RobotDescription[] {
-                new RobotDescription("1", new Coordinate(3,3), Orientation.NORTH)
-        };
+        List<RobotDescription> results = new ArrayList<>();
+        results.add(new RobotDescription("1", new Coordinate(3,3), Orientation.NORTH));
 
         runSample(commands, results);
     }
@@ -78,21 +75,23 @@ public class IntegrationTests {
                 "MOVE"
         };
 
-        RobotDescription[] results = new RobotDescription[] {
-                new RobotDescription("1", new Coordinate(1,2), Orientation.NORTH),
-                new RobotDescription("2", new Coordinate(2, 1), Orientation.SOUTH)
-        };
+        List<RobotDescription> results = new ArrayList<>(
+        );
+
+
+        results.add(new RobotDescription("1", new Coordinate(1,2), Orientation.NORTH));
+        results.add(new RobotDescription("2", new Coordinate(2, 1), Orientation.SOUTH));
 
         runSample(commands, results);
     }
 
-    private void runSample(String[] commands, RobotDescription[] results) {
+    private void runSample(String[] commands, List<RobotDescription> results) {
         Table table = new Table(5, 5);
         Controller.getInstance().setTable(table);
         for (String command : commands) {
             Display.dispatch(command);
         }
 
-        assertTrue(Arrays.deepEquals(results, Controller.getInstance().getState()));
+        assertTrue(results.equals(Controller.getInstance().getState()));
     }
 }
