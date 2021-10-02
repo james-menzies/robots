@@ -11,6 +11,7 @@ import robots.views.Display;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class IntegrationTests {
@@ -92,6 +93,6 @@ public class IntegrationTests {
             Display.dispatch(command);
         }
 
-        assertTrue(results.equals(Controller.getInstance().getState()));
+        assertEquals(results, Controller.getInstance().getState());
     }
 }
