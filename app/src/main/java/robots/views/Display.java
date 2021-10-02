@@ -6,10 +6,7 @@ import robots.controllers.RobotDescription;
 import robots.models.Coordinate;
 import robots.models.Orientation;
 
-import java.util.ConcurrentModificationException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 public class Display {
     /*
@@ -22,9 +19,11 @@ public class Display {
      */
     static {
         controller = Controller.getInstance();
+        scanner = new Scanner(System.in);
     }
 
     private static IController controller;
+    private static Scanner scanner;
 
     // package private so that the test class can mock out the controller.
     static void setController(IController controller) {
@@ -33,14 +32,42 @@ public class Display {
     }
 
     static void displayCallback(List<RobotDescription> descriptions) {
+        if (descriptions.size() == 1) {
+            System.out.println(renderRobotDescription(descriptions.get(0)));
+        }
 
+    }
+
+    static private String renderRobotDescription(RobotDescription description) {
+        return String.format("%s,%s,%s",
+                description.getCoordinate().getX(),
+                description.getCoordinate().getY(),
+                description.getOrientation());
     }
 
     public static void run() {
 
+        /*
+        This program will continue to read input infinitely as there's no
+        instructions on how to exit the program. If such logic were to be
+        implemented, it would be implemented here.
+
+        This program could still be ended manually by sending a SIGTERM
+        signal via pressing CTRL-C in the terminal.
+         */
+
+        while (true) {
+            String command = scanner.nextLine();
+            dispatch(command);
+        }
+
     }
 
     public static void dispatch(String command) {
+        /*
+        Programmatically dispatch the passed in command. This helps isolate
+        the Display logic for testing purposes.
+         */
 
         if (command.length() == 0) {
             return;
@@ -77,6 +104,10 @@ public class Display {
     }
 
     private static void processOnPlace(String argument) {
+        /*
+        Helper method to parse the argument provided to the onPlace command,
+        and call it.
+         */
 
         if (Objects.isNull(argument)) {
             return;
@@ -100,6 +131,11 @@ public class Display {
     }
 
     private static void processOnRobot(String argument) {
+        /*
+        Helper method to parse the argument provided to the onRobot command,
+        and call it.
+         */
+
         try {
             int reference = Integer.parseInt(argument);
             controller.onRobot(reference);
