@@ -1,10 +1,12 @@
 package robots.views;
 
+import robots.controllers.Controller;
 import robots.controllers.IController;
 import robots.controllers.RobotDescription;
 import robots.models.Coordinate;
 import robots.models.Orientation;
 
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -18,6 +20,9 @@ public class Display {
     If users were meant to receive feedback on invalid input, it would be contained
     within this class.
      */
+    static {
+        controller = Controller.getInstance();
+    }
 
     private static IController controller;
 
@@ -35,7 +40,7 @@ public class Display {
 
     }
 
-    static void dispatch(String command) {
+    public static void dispatch(String command) {
 
         if (command.length() == 0) {
             return;
@@ -103,5 +108,4 @@ public class Display {
             return;
         }
     }
-
 }
