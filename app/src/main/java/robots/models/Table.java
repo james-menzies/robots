@@ -7,7 +7,7 @@ public class Table {
 
     private Coordinate tableLimit;
     private Map<Integer, PositionedEntity> registeredEntities;
-    private int counter = 0;
+    private int counter = 1;
 
     public Table(int width, int height) {
         this.tableLimit = new Coordinate(width - 1, height - 1);
