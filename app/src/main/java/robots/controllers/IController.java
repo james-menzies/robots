@@ -9,6 +9,8 @@ import java.util.function.Consumer;
 public interface IController {
 
     void onPlace(Coordinate c, Orientation orientation);
+    void onMove();
+
     void onLeft();
     void onRight();
     void onReport();
