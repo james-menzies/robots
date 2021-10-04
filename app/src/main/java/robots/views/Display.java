@@ -40,7 +40,9 @@ public class Display {
             System.out.println(renderRobotDescription(descriptions.get(0)));
         } else {
             descriptions.forEach( description -> {
-                System.out.printf("%s: %s%n", description.getName(), renderRobotDescription(description));
+                System.out.printf("%s: %s%n",
+                        description.getName(),
+                        renderRobotDescription(description));
             });
         }
     }

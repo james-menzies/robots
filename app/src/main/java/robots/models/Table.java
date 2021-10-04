@@ -26,21 +26,34 @@ public class Table {
         }
 
         PositionedEntity activeEntity = registeredEntities.get(reference);
-        Coordinate targetLocation = activeEntity.getTableEntity().getIntent(activeEntity.getCoordinate());
+        Coordinate currentLocation = activeEntity.getCoordinate();
+        Coordinate targetLocation = activeEntity.getTableEntity().getIntent(currentLocation);
 
+
+        // Do nothing if move would put entity off the table.
         if (coordinateOutOfRange(targetLocation)) {
             return false;
         }
 
-        for (int index : registeredEntities.keySet()) {
-
-            if (targetLocation.equals(registeredEntities.get(index).getCoordinate())) {
-                return false;
-            }
+        // Do nothing if Coordinate position is already occupied.
+        if(isPositionOccupied(targetLocation)) {
+            return false;
         }
 
         activeEntity.setCoordinate(targetLocation);
         return true;
+    }
+
+    private boolean isPositionOccupied(Coordinate coordinate) {
+        for (int index : registeredEntities.keySet()) {
+
+            Coordinate entityLocation = registeredEntities.get(index).getCoordinate();
+            if (coordinate.equals(entityLocation)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public int registerEntity(TableEntity tableEntity, Coordinate coordinate)
@@ -50,11 +63,8 @@ public class Table {
             throw new IllegalStateException("Provided coordinate is out of bounds of the table");
         }
 
-        for (PositionedEntity positionedEntity : registeredEntities.values()) {
-
-            if (positionedEntity.getCoordinate() == coordinate) {
-                throw new IllegalStateException("Position already occupied in table.");
-            }
+        if (isPositionOccupied(coordinate)) {
+            throw new IllegalStateException("Position already occupied in table.");
         }
 
         int newIndex = registeredEntityCounter;
@@ -67,7 +77,6 @@ public class Table {
         Map<Integer, Coordinate> returnValue = new HashMap<>();
 
         for (int index : registeredEntities.keySet()) {
-
             returnValue.put(index, registeredEntities.get(index).getCoordinate());
         }
 
