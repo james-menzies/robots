@@ -1,5 +1,6 @@
 package robots;
 
+import org.junit.Before;
 import org.junit.Test;
 import robots.controllers.Controller;
 import robots.controllers.RobotDescription;
@@ -12,9 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class IntegrationTests {
+
+    @Before
+    public void before() {
+        Table table = new Table(5, 5);
+        Controller.getInstance().setTable(table);
+    }
 
     @Test
     public void sampleRun1() {
