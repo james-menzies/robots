@@ -1,15 +1,15 @@
 ## About
 
-This challenge attempts to solve the IOOF's recruitment challenge involving a robot simulation. The complete details of the challenge is [laid out in full here.](https://github.com/ioof-holdings/recruitment/wiki/Robot-Challenge) This program solves the extension to the problem, which allows multiple robots to roam around on the table. The following discussion will provide a high-level overview of the architecture, followed by a more detailed breakdown of classes and interfaces, followed by the testing methodology. 
+This challenge solves the IOOF's recruitment challenge involving a robot simulation. The complete details of the challenge is [laid out in full here.](https://github.com/ioof-holdings/recruitment/wiki/Robot-Challenge) This program solves the extension to the problem, which allows multiple robots to roam around on the table. The following discussion will provide a high-level overview of the architecture, followed by a more detailed breakdown of classes and interfaces, followed by the testing methodology. 
 
-This program is written in Java 11, however is completely backward-compatible with Java 8.
+This program is written in a Java 11 environment, however is completely compatible with Java 8+.
 
 ## How to Run
 The following instructions explain how to run the program as well as the test suite. Instructions are (virtually) identical between Windows (Powershell), Mac OS, and Linux (Bash). A basic knowledge of terminal commands are required. 
 
 > This program uses Gradle as a build tool, however it is *not* required to be installed in order to run the program. 
 
-###Steps
+### Steps
 1. Make sure that Git and either your choice of JDK 8 or JDK 11 are installed. *NB: JRE 8 will not work with this program.*
 2. Navigate to your desired directory via the terminal.
 3. Clone the repository `git clone https://github.com/james-menzies/robot-challenge`
