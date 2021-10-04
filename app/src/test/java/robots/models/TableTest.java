@@ -33,10 +33,12 @@ public class TableTest {
     @Test(expected = IllegalStateException.class)
     public void occupiedPlacementThrowsException() {
 
-        Coordinate c = new Coordinate(2, 3);
-        table.registerEntity(mock1, c);
+        Coordinate c1 = new Coordinate(2, 3);
+        Coordinate c2 = new Coordinate(2, 3);
 
-        table.registerEntity(mock2, c);
+        table.registerEntity(mock1, c1);
+
+        table.registerEntity(mock2, c2);
     }
 
     @Test

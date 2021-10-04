@@ -7,11 +7,16 @@ public class Table {
 
     private Coordinate tableLimit;
     private Map<Integer, PositionedEntity> registeredEntities;
-    private int counter = 1;
+    private int registeredEntityCounter = 1;
 
     public Table(int width, int height) {
         this.tableLimit = new Coordinate(width - 1, height - 1);
         this.registeredEntities = new HashMap<>();
+    }
+
+    private boolean coordinateOutOfRange(Coordinate coordinate) {
+        return coordinate.getX() > tableLimit.getX()
+                || coordinate.getY() > tableLimit.getY();
     }
 
     public boolean move(int reference) throws IndexOutOfBoundsException {
@@ -23,7 +28,7 @@ public class Table {
         PositionedEntity activeEntity = registeredEntities.get(reference);
         Coordinate targetLocation = activeEntity.getTableEntity().getIntent(activeEntity.getCoordinate());
 
-        if (targetLocation.getY() > tableLimit.getY() || targetLocation.getX() > tableLimit.getX()) {
+        if (coordinateOutOfRange(targetLocation)) {
             return false;
         }
 
@@ -38,23 +43,23 @@ public class Table {
         return true;
     }
 
-    public int registerEntity(TableEntity t, Coordinate c)
+    public int registerEntity(TableEntity tableEntity, Coordinate coordinate)
             throws IllegalStateException {
 
-        if (c.getX() > tableLimit.getX() || c.getY() > tableLimit.getY()) {
+        if (coordinateOutOfRange(coordinate)) {
             throw new IllegalStateException("Provided coordinate is out of bounds of the table");
         }
 
-        for (PositionedEntity entity : registeredEntities.values()) {
+        for (PositionedEntity positionedEntity : registeredEntities.values()) {
 
-            if (entity.getCoordinate() == c) {
+            if (positionedEntity.getCoordinate() == coordinate) {
                 throw new IllegalStateException("Position already occupied in table.");
             }
         }
 
-        int newIndex = counter;
-        registeredEntities.put(newIndex, new PositionedEntity(c, t));
-        counter++;
+        int newIndex = registeredEntityCounter;
+        registeredEntities.put(newIndex, new PositionedEntity(coordinate, tableEntity));
+        registeredEntityCounter++;
         return newIndex;
     }
 
