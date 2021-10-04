@@ -5,7 +5,7 @@ This challenge attempts to solve the IOOF's recruitment challenge involving a ro
 This program is written in Java 11, however is completely backward-compatible with Java 8.
 
 ## How to Run
-The following instructions explain how to run the program as well as the test suite. Instructions are (virtually) identical between Windows (Powershell), MacOS and Linux (Bash). A basic knowledge of terminal commands are required. 
+The following instructions explain how to run the program as well as the test suite. Instructions are (virtually) identical between Windows (Powershell), Mac OS, and Linux (Bash). A basic knowledge of terminal commands are required. 
 
 > This program uses Gradle as a build tool, however it is *not* required to be installed in order to run the program. 
 
@@ -45,7 +45,7 @@ To round out the application, a `Main` class is implemented to bootstrap the pro
 
 ## The Model
 
-There are 2 primary components in this program, the **ROBOT** and the **TABLE.** However, for context it is important to first discuss some support objects
+There are 2 primary components in this program, the `Robot` and the `Table`. However, for context it is important to first discuss some support objects.
 
 ### Support Objects
 * `Coordinate` - An object to represent a location on the `Table`. It is an immutable, read-only object that has two instance variables `x` and `y`, as well as getters for those variables. Both variables must be equal to or greater than 0.
@@ -59,8 +59,8 @@ The `Robot` class represents instances of the physical robots that roam on the t
 * `Orientation orientation` - The direction the `Robot` is facing, must be provided on initialization.
 #### Methods
 * `Orientation getOrientation()` 
-* `void turn(Direction d)` - This will analyze the direction provided and update the `orientation` variable.
-* `Coordinate getIntent(Coordinate c)` - This will calculate where this object would move based on the given `Coordinate`
+* `void turn(Direction direction)` - This will analyze the direction provided and update the `orientation` variable.
+* `Coordinate getIntent(Coordinate currentPosition)` - This will calculate where this object would move based on the given `Coordinate`
 
 ### Table
 
@@ -72,7 +72,7 @@ The table represents the surface the `Robot` instances traverse, and are ultimat
 * `Map<Integer, PositionedEntity> registeredEntities` - This stores a reference to all the entities on the table and is used extensively in the methods described below. Also see `PositionedEntity` for a detailed explanation.
 #### Methods
 * `boolean move(int reference)` - Given an integer reference, this method will analyze the `PositionedEntity` for the given reference, and establish whether the move is permissible based on the position of the other objects on, and the range of, the table. If an invalid reference is given, an Exception will occur.
-* `int registerEntity(TableEntity t, Coordinate c)` - This will attempt to place the entity in the `registeredEntities` variable. An exception will be thrown if the `Coordinate` value is out of range of the `Table` or the position is occupied. It will return an integer reference to be used for subsequent method calls.
+* `int registerEntity(TableEntity tableEntity, Coordinate coordinate)` - This will attempt to place the entity in the `registeredEntities` variable. An exception will be thrown if the `Coordinate` value is out of range of the `Table` or the position is occupied. It will return an integer reference to be used for subsequent method calls.
 * `Map<Integer, Coordinate> getPositions()` - This will return a map of all entity references to their position on the table.
 
 
@@ -81,7 +81,7 @@ The table represents the surface the `Robot` instances traverse, and are ultimat
 The `TableEntity` is a functional interface, and any object that would exist on the `Table` needs to implement it. It contains the `getIntent()` method as described by the `Robot` class.
 
 #### Methods
-* `Coordinate getIntent(Coordinate c)`
+* `Coordinate getIntent(Coordinate currentPosition)`
 
 ### PositionedEntity
 
@@ -93,7 +93,7 @@ This is an inner class contained in the `Table` class, and is simply a way to fu
 #### Methods
 * `getEntity()`
 * `getCoordinate()`
-* `setCoordinate(Coordinate c)`
+* `setCoordinate(Coordinate coordinate)`
 
 ## The Controller
 
@@ -130,7 +130,7 @@ application.
 
 #### Methods
 
-* `static void initialize(Table t)` - Required to initialized the application state. Failing to to call this function before calling `onPlace` will result in an exception being thrown.
+* `static void initialize(Table t)` - Required to initialize the application state. Failing to call this function before calling `onPlace` will result in an exception being thrown.
 * `static Controller getInstance()` - Get the single running instance of the `Controller` class.
 * `void onPlace(Coordinate c, Orientation o)` - This will place a `Robot` on the table. This method will perform no function if the `Coordinate` argument is beyond the range of the table. This method must also be called before any of the other handlers, which will perform no function until that point.
 * `void onMove()` - Inspects the `activeRobot` variable and calls the `move()` method on the `Table`.
@@ -141,13 +141,13 @@ application.
 * `void setOnReportCallback(Consumer<List<RobotDescription>>)` - This registers a callback that gets called when the `onReport` handle is called. If unset `onReport()` will perform no function.
 
 ### RobotDescription Class
-This class is introduced to address the need to combine together information about the position (stored in the `Table`) and orientation (stored in the `Robot`) so that it can be output as per the requirements in the challenge description. It in an inner class of `Controller` and has 3 read-only variables:
+This class is introduced to address the need to combine information together about the position (stored in the `Table`) and orientation (stored in the `Robot`) so that it can be output as per the requirements in the challenge description. It in an inner class of `Controller` and has 3 read-only variables:
 * `String name`
 * `Coordinate coordinate`
 * `Orientation orientation`
 
 ## The View
-The **View** is very similar to the **Controller** in that it is contained in a single class and is accessed statically. It will statically call the `setOnReportCallback` method in the loading of the class, so no initialization method is required in this intance.
+The **View** is very similar to the **Controller** in that it is contained in a single class and is accessed statically. It will statically call the `setOnReportCallback` method in the loading of the class, so no initialization method is required in this instance.
 
 
 ### Methods
@@ -160,7 +160,7 @@ Testing will involve the use of unit as well as integration testing. For each cl
 
 ### Orientation
 * Ensure negative indices cannot be created on either variable.
-* Ensure that equality works as expected, e.g. (1,2) == (1,2).
+* Ensure that equality works as expected.
 
 ### Robot
 * Ensure that the robot turns correctly, e.g. a robot turning left when facing `NORTH` should then be facing `WEST`.
@@ -169,7 +169,7 @@ Testing will involve the use of unit as well as integration testing. For each cl
 
 ### Table
 
-Since the `Table` refers to the `Robots` via an interface, we can supply a mock of this inteface when testing.
+Since the `Table` refers to the `Robots` via an interface, it can be mocked when testing.
 
 Desired behaviour:
 * Out of range register throws exception.
@@ -181,7 +181,7 @@ Desired behaviour:
 
 ### Display
 
-The Display has separated the dispatch logic from the reading of standard input. This means commands can be programmatically passed to the display so they can be tested. The other half of this process involves mocking out the `Controller` class, again via an interface. 
+The Display has separated the dispatch logic from the reading of standard input. This means commands can be programmatically passed to the display in order to be tested. The other part of this process involves mocking out the `Controller` class, again via an interface. 
 
 This interface contains all of the `Controller` class methods minus the `initialize()` and `getInstance()` methods. It adds the functionality of exposing the last called handler to ensure that the correct handler is being called by the display.
 
@@ -194,4 +194,4 @@ Desired behaviour:
 
 ### Controller
 
-The logic of the `Controller` will be tested through integration tests, rather than by mocking out classes. It will use the example cases mentioned in the challenge description, as well as a few additonaly ones.
+The logic of the `Controller` will be tested through integration tests, rather than by mocking out classes. It will use the example cases mentioned in the challenge description, as well as a more complex example involving multiple robots. 
