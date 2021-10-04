@@ -15,11 +15,11 @@ public class Robot implements TableEntity{
         return orientation;
     }
 
-    public void turn(Direction d) {
+    public void turn(Direction direction) {
         // Here we attempt to find correct index of the orientations variable
         // so that we can update the Robot's orientation.
         int targetOrientationIndex = this.orientation.ordinal();
-        targetOrientationIndex = d == Direction.LEFT ?
+        targetOrientationIndex = direction == Direction.LEFT ?
                 targetOrientationIndex - 1 : targetOrientationIndex + 1;
 
         // Ensure orientation out-of-bounds does not occur.
