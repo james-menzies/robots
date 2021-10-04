@@ -45,13 +45,14 @@ public class Controller implements IController {
                 activeRobot = id;
             }
         } catch (IllegalStateException e) {
-            return;
+            // could potentially report error to user here.
         }
     }
 
     @Override
     public void onMove() {
         if (activeRobot == 0) {
+            // could potentially direct user to PLACE robot first here.
             return;
         }
 
@@ -62,6 +63,7 @@ public class Controller implements IController {
     public void onLeft() {
 
         if (activeRobot == 0) {
+            // could potentially direct user to PLACE robot first here.
             return;
         }
 
@@ -72,6 +74,7 @@ public class Controller implements IController {
     public void onRight() {
 
         if (activeRobot == 0) {
+            // could potentially direct user to PLACE robot first here.
             return;
         }
 
