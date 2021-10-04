@@ -11,6 +11,7 @@ public class Controller implements IController {
     private Map<Integer, Robot> robots;
     private Table table;
     private Consumer<List<RobotDescription>> onReportCallback;
+
     /*
     The following code is used to apply the Singleton pattern to the Controller class.
      */
@@ -19,9 +20,7 @@ public class Controller implements IController {
     private Controller() {
         robots = new HashMap<>();
         onReportCallback = (robots) -> {
-
         };
-
     }
 
     public void setTable(Table table) {
@@ -46,13 +45,13 @@ public class Controller implements IController {
                 activeRobot = id;
             }
         } catch (IllegalStateException e) {
-           return;
+            return;
         }
     }
 
     @Override
     public void onMove() {
-        if (Objects.isNull(activeRobot)) {
+        if (activeRobot == 0) {
             return;
         }
 
@@ -62,7 +61,7 @@ public class Controller implements IController {
     @Override
     public void onLeft() {
 
-        if (Objects.isNull(activeRobot)) {
+        if (activeRobot == 0) {
             return;
         }
 
@@ -72,7 +71,7 @@ public class Controller implements IController {
     @Override
     public void onRight() {
 
-        if (Objects.isNull(activeRobot)) {
+        if (activeRobot == 0) {
             return;
         }
 
