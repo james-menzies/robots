@@ -5,7 +5,33 @@ This challenge attempts to solve the IOOF's recruitment challenge involving a ro
 This program is written in Java 11, however is completely backward-compatible with Java 8.
 
 ## How to Run
-(Coming Soon)
+The following instructions explain how to run the program as well as the test suite. Instructions are (virtually) identical between Windows (Powershell), MacOS and Linux (Bash). A basic knowledge of terminal commands are required. 
+
+> This program uses Gradle as a build tool, however it is *not* required to be installed in order to run the program. 
+
+###Steps
+1. Make sure that Git and either your choice of JDK 8 or JDK 11 are installed. *NB: JRE 8 will not work with this program.*
+2. Navigate to your desired directory via the terminal.
+3. Clone the repository `git clone https://github.com/james-menzies/robot-challenge`
+4. Navigate to newly created directory `cd robot-challenge`
+5. If on Mac / Linux, run this command `chmod +x gradlew`
+6. To run the program, run `./gradlew run --quiet --console=plain`
+7. To run the tests, run `./gradlew test --rerun-tasks`
+
+> On Windows, substitute `./gradlew` with `.\gradlew.bat`
+
+### Troubleshooting
+#### Getting a 'Permission Denied' Error
+Make sure that you have run the command in step 5 to make the script executable.
+#### 'Cannot find tools.jar'
+Make sure that you are using JDK 8 and not JRE 8.
+#### Corrupted graphical output
+Make sure that you include the `--console-plain` and `--quiet` flags in the `run` command.
+
+#### I don't have Gradle installed.
+
+That's OK! The wrapper downloads it for you and places it in the project directory. When you're done with the program, delete the project folder and the Gradle installation will disappear too.
+
 
 ## Program Architecture
 
