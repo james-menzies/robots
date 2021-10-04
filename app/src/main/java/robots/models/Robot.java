@@ -3,7 +3,7 @@ package robots.models;
 public class Robot implements TableEntity{
 
     // caching used for performance reasons.
-    static private Orientation[] orientations = Orientation.values();
+    static private final Orientation[] orientations = Orientation.values();
 
     private Orientation orientation;
 
@@ -29,29 +29,31 @@ public class Robot implements TableEntity{
         this.orientation = Robot.orientations[targetOrientationIndex];
     }
 
-    public Coordinate getIntent(Coordinate c) {
+    public Coordinate getIntent(Coordinate currentPosition) {
 
-        int newX = c.getX();
-        int newY = c.getY();
+        int updatedXPosition = currentPosition.getX();
+        int updatedYPosition = currentPosition.getY();
 
         switch (this.orientation) {
             case EAST:
-                newX++;
+                updatedXPosition++;
                 break;
             case WEST:
-                newX--;
+                updatedXPosition--;
                 break;
             case NORTH:
-                newY++;
+                updatedYPosition++;
                 break;
             case SOUTH:
-                newY--;
+                updatedYPosition--;
                 break;
         }
 
         // return original Coordinate if indices are negative.
-        if (newX < 0 || newY < 0) return c;
-
-        return new Coordinate(newX, newY);
+        try {
+            return new Coordinate(updatedXPosition, updatedYPosition);
+        } catch (IllegalStateException e) {
+            return currentPosition;
+        }
     }
 }

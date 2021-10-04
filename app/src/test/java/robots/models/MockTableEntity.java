@@ -14,7 +14,7 @@ public class MockTableEntity implements TableEntity {
     }
 
     @Override
-    public Coordinate getIntent(Coordinate c) {
+    public Coordinate getIntent(Coordinate currentPosition) {
         return this.intent;
     }
 
