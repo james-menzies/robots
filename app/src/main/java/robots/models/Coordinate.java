@@ -1,5 +1,7 @@
 package robots.models;
 
+import java.util.Objects;
+
 public class Coordinate {
 
     private int x;
@@ -23,15 +25,16 @@ public class Coordinate {
         return y;
     }
 
-    // Provide equality based on x and y attributes
     @Override
-    public boolean equals(Object obj) {
-       if (!(obj instanceof Coordinate)) {
-           return false;
-       }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Coordinate that = (Coordinate) o;
+        return getX() == that.getX() && getY() == that.getY();
+    }
 
-       Coordinate other = (Coordinate) obj;
-
-       return this.x == other.getX() && this.y == other.getY();
+    @Override
+    public int hashCode() {
+        return Objects.hash(getX(), getY());
     }
 }
