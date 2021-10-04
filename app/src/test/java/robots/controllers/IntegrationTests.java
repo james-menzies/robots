@@ -1,4 +1,4 @@
-package robots;
+package robots.controllers;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +18,7 @@ public class IntegrationTests {
 
     @Before
     public void before() {
+        Controller.getInstance().resetState();
         Table table = new Table(5, 5);
         Controller.getInstance().setTable(table);
     }

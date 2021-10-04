@@ -23,6 +23,14 @@ public class Controller implements IController {
         };
     }
 
+    void resetState() {
+        // this is used by the integration suite to reset the controller back
+        // to the initial state.
+        activeRobot = 0;
+        robots = new HashMap<>();
+        table = null;
+    }
+
     public void setTable(Table table) {
         this.table = table;
     }
