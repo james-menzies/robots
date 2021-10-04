@@ -1,15 +1,16 @@
 package robots.views;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
+import robots.controllers.Controller;
 import robots.controllers.MockController;
 
 import static org.junit.Assert.*;
 
 public class DisplayTest {
 
-    private MockController controller;
+    public MockController controller;
 
     @Before
     public void before() {
@@ -74,8 +75,12 @@ public class DisplayTest {
         assertNull(controller.getLastHandleCalled());
     }
 
-    @After
-    public void after() {
-        controller = null;
+    @AfterClass
+    public static void after() {
+        /*
+        This method is really important to ensure that MockController isn't
+        used for the rest of the testing suite.
+         */
+        Display.setController(Controller.getInstance());
     }
 }
