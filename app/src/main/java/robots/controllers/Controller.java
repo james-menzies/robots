@@ -81,7 +81,7 @@ public class Controller implements IController {
 
     @Override
     public void onReport() {
-
+        onReportCallback.accept(getState());
     }
 
     @Override

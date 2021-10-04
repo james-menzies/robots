@@ -6,6 +6,8 @@ import robots.controllers.RobotDescription;
 import robots.models.Coordinate;
 import robots.models.Orientation;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Display {
@@ -17,13 +19,15 @@ public class Display {
     If users were meant to receive feedback on invalid input, it would be contained
     within this class.
      */
+    private static IController controller;
+    private static Scanner scanner;
+
     static {
         controller = Controller.getInstance();
         scanner = new Scanner(System.in);
+        controller.setOnReportCallback(Display::displayCallback);
     }
 
-    private static IController controller;
-    private static Scanner scanner;
 
     // package private so that the test class can mock out the controller.
     static void setController(IController controller) {
@@ -34,8 +38,11 @@ public class Display {
     static void displayCallback(List<RobotDescription> descriptions) {
         if (descriptions.size() == 1) {
             System.out.println(renderRobotDescription(descriptions.get(0)));
+        } else {
+            descriptions.forEach( description -> {
+                System.out.printf("%s: %s%n", description.getName(), renderRobotDescription(description));
+            });
         }
-
     }
 
     static private String renderRobotDescription(RobotDescription description) {
@@ -45,7 +52,8 @@ public class Display {
                 description.getOrientation());
     }
 
-    public static void run() {
+    public static void run()
+        throws java.io.IOException {
 
         /*
         This program will continue to read input infinitely as there's no
@@ -56,7 +64,10 @@ public class Display {
         signal via pressing CTRL-C in the terminal.
          */
 
+        System.out.println("Robot simulation");
+
         while (true) {
+            System.out.print(">> ");
             String command = scanner.nextLine();
             dispatch(command);
         }
@@ -68,6 +79,9 @@ public class Display {
         Programmatically dispatch the passed in command. This helps isolate
         the Display logic for testing purposes.
          */
+        if (Objects.isNull(command)) {
+            return;
+        }
 
         if (command.length() == 0) {
             return;
