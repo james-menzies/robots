@@ -1,0 +1,3 @@
+module robots {
+    exports robots;
+}
