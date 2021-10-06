@@ -1,15 +1,26 @@
 ## About
 
-This challenge attempts to solve the IOOF's recruitment challenge involving a robot simulation. The complete details of the challenge is [laid out in full here.](https://github.com/ioof-holdings/recruitment/wiki/Robot-Challenge) This program solves the extension to the problem, which allows multiple robots to roam around on the table. The following discussion will provide a high-level overview of the architecture, followed by a more detailed breakdown of classes and interfaces, followed by the testing methodology. 
+This challenge solves the IOOF's recruitment challenge involving a robot simulation. The complete details of the challenge is [laid out in full here.](https://github.com/ioof-holdings/recruitment/wiki/Robot-Challenge) This program solves the extension to the problem, which allows multiple robots to roam around on the table. The following discussion will provide a high-level overview of the architecture, followed by a more detailed breakdown of classes and interfaces, followed by the testing methodology. 
 
-This program is written in Java 11, however is completely backward-compatible with Java 8.
+This program is written in a Java 11 environment, however is completely compatible with Java 8+.
 
 ## How to Run
-The following instructions explain how to run the program as well as the test suite. Instructions are (virtually) identical between Windows (Powershell), Mac OS, and Linux (Bash). A basic knowledge of terminal commands are required. 
 
-> This program uses Gradle as a build tool, however it is *not* required to be installed in order to run the program. 
+### Running With Docker
 
-###Steps
+Running with Docker is the recommend way to run this application. Simply make sure that you have [Docker](https://docs.docker.com/get-docker/) installed and run the following command:
+
+```
+docker run -it --rm jamesrmenzies/robots
+```
+This will put you straight into the interactive prompt to run the simulation. The image is approximately 90 MB in size.
+
+### From Source
+If you prefer to not use Docker, or would like to run the test suite, it is also possible to run the program from source. Instructions are (virtually) identical between Windows (Powershell), Mac OS, and Linux (Bash). A basic knowledge of terminal commands is required. 
+
+> This program uses Gradle as a build tool, however it is *not* required to be installed in order to run the program, as it will be bootstrapped for you. Note that there is some input lag when running the application in comparison to the Dockerised version. This is due to the presence of Gradle when running the application.
+
+### Steps
 1. Make sure that Git and either your choice of JDK 8 or JDK 11 are installed. *NB: JRE 8 will not work with this program.*
 2. Navigate to your desired directory via the terminal.
 3. Clone the repository `git clone https://github.com/james-menzies/robot-challenge`
@@ -19,6 +30,8 @@ The following instructions explain how to run the program as well as the test su
 7. To run the tests, run `./gradlew test --rerun-tasks`
 
 > On Windows, substitute `./gradlew` with `.\gradlew.bat`
+
+
 
 ### Troubleshooting
 #### Getting a 'Permission Denied' Error
@@ -156,7 +169,7 @@ The **View** is very similar to the **Controller** in that it is contained in a 
 
 ## Testing
 
-Testing will involve the use of unit as well as integration testing. For each class, the desired behaviour has been outlined. No tests will be specifically created for `Direction`, `Orientation`, `RobotDescription` and `PositionedEntity` as they are basic to contain anything meaningful to test.
+Testing involves the use of unit as well as integration testing. For each class, the desired behaviour has been outlined. No tests will be specifically created for `Direction`, `Orientation`, `RobotDescription` and `PositionedEntity` as they are too basic to contain anything meaningful to test.
 
 ### Orientation
 * Ensure negative indices cannot be created on either variable.
@@ -185,7 +198,7 @@ The Display has separated the dispatch logic from the reading of standard input.
 
 This interface contains all of the `Controller` class methods minus the `initialize()` and `getInstance()` methods. It adds the functionality of exposing the last called handler to ensure that the correct handler is being called by the display.
 
-To ensure that information is displayed correctly to the user, manual tests will be performed.
+To ensure that information is displayed correctly to the user, manual tests have been performed.
 
 Desired behaviour:
 * All zero-argument commands (`REPORT`, `LEFT`, `RIGHT` and `MOVE`) get correctly called.
@@ -194,4 +207,4 @@ Desired behaviour:
 
 ### Controller
 
-The logic of the `Controller` will be tested through integration tests, rather than by mocking out classes. It will use the example cases mentioned in the challenge description, as well as a more complex example involving multiple robots. 
+The logic of the `Controller` is tested via integration tests, rather than by mocking out classes. It uses the example cases mentioned in the challenge description, as well as a more complex example involving multiple robots. 
