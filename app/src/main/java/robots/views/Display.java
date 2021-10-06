@@ -6,9 +6,11 @@ import robots.controllers.RobotDescription;
 import robots.models.Coordinate;
 import robots.models.Orientation;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Scanner;
+
 
 public class Display {
     /*
@@ -20,7 +22,7 @@ public class Display {
     within this class.
      */
     private static IController controller;
-    private static Scanner scanner;
+    private static final Scanner scanner;
 
     static {
         controller = Controller.getInstance();
@@ -39,11 +41,9 @@ public class Display {
         if (descriptions.size() == 1) {
             System.out.println(renderRobotDescription(descriptions.get(0)));
         } else {
-            descriptions.forEach( description -> {
-                System.out.printf("%s: %s%n",
-                        description.getName(),
-                        renderRobotDescription(description));
-            });
+            descriptions.forEach( description -> System.out.printf("%s: %s%n",
+                    description.getName(),
+                    renderRobotDescription(description)));
         }
     }
 
@@ -54,8 +54,7 @@ public class Display {
                 description.getOrientation());
     }
 
-    public static void run()
-        throws java.io.IOException {
+    public static void run() {
 
         /*
         This program will continue to read input infinitely as there's no
@@ -113,7 +112,6 @@ public class Display {
                 Display.processOnRobot(argument);
                 break;
             default:
-                return;
         }
 
 
@@ -141,8 +139,7 @@ public class Display {
             Coordinate coordinate = new Coordinate(x, y);
             Orientation orientation = Orientation.valueOf(tokens[2]);
             controller.onPlace(coordinate, orientation);
-        } catch (IllegalArgumentException e) {
-            return;
+        } catch (IllegalArgumentException ignored) {
         }
     }
 
@@ -156,8 +153,7 @@ public class Display {
             int reference = Integer.parseInt(argument);
             controller.onRobot(reference);
 
-        } catch (NumberFormatException e) {
-            return;
+        } catch (NumberFormatException ignored) {
         }
     }
 }
